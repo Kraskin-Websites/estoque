@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Controle de Estoque</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      margin-top: 40px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: #444;
+      font-size: 18px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+    }
+
+    .form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 4px rgba(74,144,226,0.4);
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #4a90e2;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #357ab8;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      background: #f9fafc;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+
+    li:hover {
+      background: #f1f5fb;
+    }
+
+    .produto {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .qtd {
+      width: 70px;
+      text-align: center;
+    }
+
+    .save-section {
+      margin-top: 25px;
+      text-align: center;
+    }
+
+    .save-section input {
+      width: 200px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📦 Controle de Estoque</h1>
+    
+    <div class="form">
+      <input id="produto" placeholder="Produto">
+      <input id="quantidade" type="number" placeholder="Qtd">
+      <button onclick="adicionar()">Adicionar</button>
+    </div>
+
+    <h2>Estoque Atual</h2>
+    <ul id="lista"></ul>
+
+    <div class="save-section">
+      <input id="senha" type="password" placeholder="Senha para salvar">
+      <button onclick="salvar()">💾 Salvar Estoque</button>
+    </div>
+  </div>
+
+  <script>
+    const SENHA = "1234"; // senha fixa
+    let estoque = JSON.parse(localStorage.getItem("estoque")) || {};
+
+    function mostrar() {
+      const lista = document.getElementById("lista");
+      lista.innerHTML = "";
+      for (let produto in estoque) {
+        const li = document.createElement("li");
+
+        const span = document.createElement("span");
+        span.textContent = produto;
+        span.classList.add("produto");
+
+        const inputQtd = document.createElement("input");
+        inputQtd.type = "number";
+        inputQtd.value = estoque[produto];
+        inputQtd.classList.add("qtd");
+        inputQtd.oninput = () => estoque[produto] = parseInt(inputQtd.value);
+
+        li.appendChild(span);
+        li.appendChild(inputQtd);
+        lista.appendChild(li);
+      }
+    }
+
+    function adicionar() {
+      const produto = document.getElementById("produto").value.trim();
+      const quantidade = parseInt(document.getElementById("quantidade").value);
+      if (produto && !isNaN(quantidade)) {
+        estoque[produto] = quantidade;
+        document.getElementById("produto").value = "";
+        document.getElementById("quantidade").value = "";
+        mostrar();
+      }
+    }
+
+    function salvar() {
+      const senha = document.getElementById("senha").value;
+      if (senha !== SENHA) {
+        alert("❌ Senha incorreta!");
+        return;
+      }
+      localStorage.setItem("estoque", JSON.stringify(estoque));
+      alert("✅ Estoque salvo com sucesso!");
+      document.getElementById("senha").value = "";
+    }
+
+    mostrar();
+  </script>
+</body>
+</html>
